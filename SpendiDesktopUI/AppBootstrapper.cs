@@ -2,7 +2,9 @@ namespace SpendiDesktopUI {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Windows.Controls;
     using Caliburn.Micro;
+    using SpendiDesktopUI.Helpers;
     using SpendiDesktopUI.ViewModels;
 
     public class AppBootstrapper : BootstrapperBase 
@@ -12,6 +14,11 @@ namespace SpendiDesktopUI {
         public AppBootstrapper() 
         {
             Initialize();
+
+            ConventionManager.AddElementConvention<PasswordBox>(
+            PasswordBoxHelper.BoundPasswordProperty,
+            "Password",
+            "PasswordChanged");
         }
 
         protected override void Configure()
