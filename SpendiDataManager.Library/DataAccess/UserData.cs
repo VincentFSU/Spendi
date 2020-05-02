@@ -1,5 +1,5 @@
 ﻿using SpendiDataManager.Library.Internal.DataAccess;
-using SpendiDesktopUI.Models;
+using SpendiDataManager.Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace SpendiDataManager.Library.DataAccess
 {
     public class UserData
     {
-        public List<UserModel> GetUSerById(string Id)
+        public List<UserModel> GetUserById(string Id)
         {
             SqlDataAccess sql = new SqlDataAccess();
 

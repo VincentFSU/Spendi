@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace SpendiDesktopUI.Models
 {
-    public class UserModel
+    public class AuthenticatedUser
     {
-        public string Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-
+        public string Access_Token { get; set; }
+        public string UserName { get; set; }
     }
 }

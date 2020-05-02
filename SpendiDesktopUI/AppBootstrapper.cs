@@ -5,6 +5,8 @@ namespace SpendiDesktopUI {
     using System.Windows.Controls;
     using Caliburn.Micro;
     using SpendiDesktopUI.Helpers;
+    using SpendiDesktopUI.Library.Helpers;
+    using SpendiDesktopUI.Library.Models;
     using SpendiDesktopUI.ViewModels;
 
     public class AppBootstrapper : BootstrapperBase 
@@ -25,7 +27,10 @@ namespace SpendiDesktopUI {
         {
             _container.Instance(_container);
 
-            _container.Singleton<IWindowManager, WindowManager>().Singleton<IEventAggregator, EventAggregator>();
+            _container.Singleton<IWindowManager, WindowManager>()
+                .Singleton<IEventAggregator, EventAggregator>()
+                .Singleton<ILoggedInUserModel, LoggedInUserModel>()
+                .Singleton<IAPIHelper, APIHelper>();
 
             //register each ViewModel to the container (reflection)
             GetType().Assembly.GetTypes().Where(type => type.IsClass).Where(type => type.Name.EndsWith("ViewModel")).ToList().ForEach(viewModelType => _container.RegisterPerRequest(viewModelType, viewModelType.ToString(), viewModelType));

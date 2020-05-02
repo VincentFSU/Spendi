@@ -1,9 +1,12 @@
 ﻿using Caliburn.Micro;
+using SpendiDesktopUI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpendiDesktopUI.Library.Helpers;
+using SpendiDesktopUI.EventModels;
 
 namespace SpendiDesktopUI.ViewModels
 {
@@ -11,7 +14,14 @@ namespace SpendiDesktopUI.ViewModels
     {
 		private string _userName;
 		private string _password;
+		private IAPIHelper _apiHelper;
+		private IEventAggregator _events;
 
+		public LoginViewModel(IAPIHelper apiHelper, IEventAggregator events)
+		{
+			_apiHelper = apiHelper;
+			_events = events;
+		}
 		public string UserName
 		{
 			get { return _userName; }
@@ -41,9 +51,20 @@ namespace SpendiDesktopUI.ViewModels
 			}
 		}
 
-		public void LogIn()
+		public async Task LogIn()
 		{
-			Console.WriteLine("Login!" + UserName + Password);
+			try
+			{
+				var result = await _apiHelper.Authenticate(UserName, Password);
+
+				await _apiHelper.GetLoggedInUserInfo(result.Access_Token);
+
+				_events.PublishOnUIThread(new LogInEvent());
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+			}
 		}
 	}
 }
