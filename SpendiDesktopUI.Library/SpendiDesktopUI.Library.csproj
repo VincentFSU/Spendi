@@ -49,7 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\APIHelper.cs" />
+    <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\IAPIHelper.cs" />
+    <Compile Include="Helpers\IConfigHelper.cs" />
     <Compile Include="Helpers\IProductEndpoint.cs" />
     <Compile Include="Helpers\ProductEndpoint.cs" />
     <Compile Include="Models\AuthenticatedUser.cs" />

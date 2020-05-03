@@ -13,5 +13,6 @@ namespace SpendiDataManager.Library.Models
         public string  ProductName { get; set; }
         public decimal RetailPrice { get; set; }
         public int QuantityInStock { get; set; }
+        public bool IsTaxable { get; set; }
     }
 }
