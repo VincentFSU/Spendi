@@ -31,7 +31,19 @@
                  MinHeight="100" MinWidth="100" SelectedItem="{Binding SelectedProduct}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding ProductName}"/>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding ProductName}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Margin="5 0 0 0">
+                                <TextBlock Text="Price: " FontSize="12"/>
+                                <TextBlock Text="{Binding RetailPrice, StringFormat='{}{0:C}'}" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin=" 5 0 0 0">
+                                <TextBlock Text="Qty: " FontSize="12"/>
+                                <TextBlock Text="{Binding QuantityInStock}" FontSize="12"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -46,7 +58,7 @@
 
         <TextBlock Text="Cart" Grid.Row="1" Grid.Column="2"/>
         <ListBox x:Name="Cart" Grid.Row="2" Grid.Column="2"
-                 Grid.RowSpan="1" MinHeight="100" MinWidth="100">
+                 MinHeight="100" MinWidth="100" SelectedItem="{Binding SelectedCartItem}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding DisplayInfo}"/>

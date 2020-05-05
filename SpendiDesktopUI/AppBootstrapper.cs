@@ -3,10 +3,12 @@ namespace SpendiDesktopUI {
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Controls;
+    using AutoMapper;
     using Caliburn.Micro;
     using SpendiDesktopUI.Helpers;
     using SpendiDesktopUI.Library.Helpers;
     using SpendiDesktopUI.Library.Models;
+    using SpendiDesktopUI.Models;
     using SpendiDesktopUI.ViewModels;
 
     public class AppBootstrapper : BootstrapperBase 
@@ -25,8 +27,19 @@ namespace SpendiDesktopUI {
 
         protected override void Configure()
         {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<ProductModel, ProductUIModel>();
+                cfg.CreateMap<CartItemModel, CartItemUIModel>();
+            });
+
+            var mapper = config.CreateMapper();
+
+            _container.Instance(mapper);
+
             _container.Instance(_container)
-                .PerRequest<IProductEndpoint, ProductEndpoint>();
+                .PerRequest<IProductEndpoint, ProductEndpoint>()
+                .PerRequest<ISaleEndpoint, SaleEndpoint>();
 
             _container
                 .Singleton<IWindowManager, WindowManager>()

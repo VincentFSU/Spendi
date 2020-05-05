@@ -1,6 +1,8 @@
-﻿using Caliburn.Micro;
+﻿using AutoMapper;
+using Caliburn.Micro;
 using SpendiDesktopUI.Library.Helpers;
 using SpendiDesktopUI.Library.Models;
+using SpendiDesktopUI.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,21 +12,26 @@ using System.Threading.Tasks;
 
 namespace SpendiDesktopUI.ViewModels
 {
-    public class SalesViewModel : Screen
-    {
+	public class SalesViewModel : Screen
+	{
 		IProductEndpoint _productEndpoint;
 		IConfigHelper _configHelper;
+		ISaleEndpoint _saleEndpoint;
+		IMapper _mapper;
 
-		public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper)
+		public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper, ISaleEndpoint saleEndpoint, IMapper mapper)
 		{
 			_productEndpoint = productEndpoint;
 			_configHelper = configHelper;
+			_saleEndpoint = saleEndpoint;
+			_mapper = mapper;
 		}
 
 		public async Task LoadProducts()
 		{
 			var productList = await _productEndpoint.GetAll();
-			Products = new BindingList<ProductModel>(productList);
+			var products = _mapper.Map<List<ProductUIModel>>(productList);
+			Products = new BindingList<ProductUIModel>(products);
 		}
 
 		protected override async void OnViewLoaded(object view)
@@ -33,35 +40,48 @@ namespace SpendiDesktopUI.ViewModels
 			await LoadProducts();
 		}
 
-		private BindingList<ProductModel> _products;
+		private BindingList<ProductUIModel> _products;
 
-		public BindingList<ProductModel> Products
+		public BindingList<ProductUIModel> Products
 		{
 			get { return _products; }
-			set 
+			set
 			{
 				_products = value;
 				NotifyOfPropertyChange(() => Products);
 			}
 		}
 
-		private ProductModel _selectedProduct;
+		private ProductUIModel _selectedProduct;
 
-		public ProductModel SelectedProduct
+		public ProductUIModel SelectedProduct
 		{
 			get { return _selectedProduct; }
-			set 
+			set
 			{
-				_selectedProduct = value; 
+				_selectedProduct = value;
 				NotifyOfPropertyChange(() => SelectedProduct);
 				NotifyOfPropertyChange(() => CanAddToCart);
 			}
 		}
 
+		private CartItemUIModel _selectedCartItem;
 
-		private BindingList<CartItemModel> _cart = new BindingList<CartItemModel>();
+		public CartItemUIModel SelectedCartItem
+		{
+			get { return _selectedCartItem; }
+			set
+			{
+				_selectedCartItem = value;
+				NotifyOfPropertyChange(() => SelectedCartItem);
+				NotifyOfPropertyChange(() => CanRemoveFromCart);
+			}
+		}
 
-		public BindingList<CartItemModel> Cart
+
+		private BindingList<CartItemUIModel> _cart = new BindingList<CartItemUIModel>();
+
+		public BindingList<CartItemUIModel> Cart
 		{
 			get { return _cart; }
 			set
@@ -116,13 +136,8 @@ namespace SpendiDesktopUI.ViewModels
 			decimal taxAmount = 0;
 			decimal taxRate = _configHelper.GetTaxRate() / 100;
 
-			foreach (var item in Cart)
-			{
-				if (true)
-				{
-					taxAmount += item.Product.RetailPrice * item.QuantityInCart * taxRate;
-				}
-			}
+			taxAmount = Cart.Where(x => x.Product.IsTaxable).Sum(x => x.Product.RetailPrice * x.QuantityInCart * taxRate);
+
 			return taxAmount;
 		}
 
@@ -141,7 +156,10 @@ namespace SpendiDesktopUI.ViewModels
 			{
 				bool output = false;
 
-
+				if (SelectedCartItem != null)
+				{
+					output = true;
+				}
 
 				return output;
 			}
@@ -149,9 +167,20 @@ namespace SpendiDesktopUI.ViewModels
 
 		public void RemoveFromCart()
 		{
+			SelectedCartItem.Product.QuantityInStock += 1;
+
+			if (SelectedCartItem.QuantityInCart > 1)
+			{
+				SelectedCartItem.QuantityInCart -= 1;
+			}
+			else
+			{
+				Cart.Remove(SelectedCartItem);
+			}
 			NotifyOfPropertyChange(() => Subtotal);
 			NotifyOfPropertyChange(() => Tax);
 			NotifyOfPropertyChange(() => Total);
+			NotifyOfPropertyChange(() => CanCheckout);
 		}
 
 		public bool CanAddToCart
@@ -172,16 +201,14 @@ namespace SpendiDesktopUI.ViewModels
 
 		public void AddToCart()
 		{
-			CartItemModel existingItem = Cart.FirstOrDefault(x => x.Product == SelectedProduct);
+			CartItemUIModel existingItem = Cart.FirstOrDefault(x => x.Product == SelectedProduct);
 			if (existingItem != null)
 			{
 				existingItem.QuantityInCart += ItemQuantity;
-				Cart.Remove(existingItem);
-				Cart.Add(existingItem);
 			}
 			else
 			{
-				CartItemModel item = new CartItemModel
+				CartItemUIModel item = new CartItemUIModel
 				{
 					Product = SelectedProduct,
 					QuantityInCart = ItemQuantity
@@ -194,6 +221,7 @@ namespace SpendiDesktopUI.ViewModels
 			NotifyOfPropertyChange(() => Subtotal);
 			NotifyOfPropertyChange(() => Tax);
 			NotifyOfPropertyChange(() => Total);
+			NotifyOfPropertyChange(() => CanCheckout);
 		}
 
 		public bool CanCheckout
@@ -202,15 +230,28 @@ namespace SpendiDesktopUI.ViewModels
 			{
 				bool output = false;
 
-
+				if (Cart.Count > 0)
+				{
+					output = true;
+				}
 
 				return output;
 			}
 		}
 
-		public void Checkout()
+		public async Task Checkout()
 		{
+			SaleModel sale = new SaleModel();
 
+			foreach (var item in Cart)
+			{
+				sale.SaleDetails.Add(new SaleDetailModel
+				{
+					ProductId = item.Product.Id,
+					Quantity = item.QuantityInCart
+				});
+			}
+			await _saleEndpoint.PostSale(sale);
 		}
 
 	}

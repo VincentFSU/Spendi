@@ -53,12 +53,16 @@
     <Compile Include="Helpers\IAPIHelper.cs" />
     <Compile Include="Helpers\IConfigHelper.cs" />
     <Compile Include="Helpers\IProductEndpoint.cs" />
+    <Compile Include="Helpers\ISaleEndpoint.cs" />
     <Compile Include="Helpers\ProductEndpoint.cs" />
+    <Compile Include="Helpers\SaleEndpoint.cs" />
     <Compile Include="Models\AuthenticatedUser.cs" />
     <Compile Include="Models\CartItemModel.cs" />
     <Compile Include="Models\ILoggedInUserModel.cs" />
     <Compile Include="Models\LoggedInUserModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
+    <Compile Include="Models\SaleDetailModel.cs" />
+    <Compile Include="Models\SaleModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

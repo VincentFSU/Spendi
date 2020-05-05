@@ -12,8 +12,8 @@ namespace SpendiDesktopUI.ViewModels
 {
     public class LoginViewModel : Screen
     {
-		private string _userName;
-		private string _password;
+		private string _userName = "vince49341@gmail.com";
+		private string _password = "Test.123";
 		private IAPIHelper _apiHelper;
 		private IEventAggregator _events;
 

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpendiDesktopUI.Library.Helpers
+namespace SpendiDataManager.Library
 {
-    public class ConfigHelper : IConfigHelper
+    public class ConfigHelper
     {
-        public decimal GetTaxRate()
+        public static decimal GetTaxRate()
         { //TODO Move to API
             string rate = ConfigurationManager.AppSettings["taxRate"];
 
