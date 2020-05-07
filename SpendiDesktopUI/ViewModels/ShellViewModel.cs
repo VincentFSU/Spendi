@@ -24,6 +24,16 @@ namespace SpendiDesktopUI.ViewModels
 
             ActivateItem(_container.GetInstance<LoginViewModel>());
         }
+        
+        public void Exit()
+        {
+            TryClose();
+        }
+
+        public void LogOut()
+        {
+
+        }
 
         public void Handle(LogInEvent message)
         {

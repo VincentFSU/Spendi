@@ -11,9 +11,9 @@ namespace SpendiDesktopUI.Library.Helpers
     public class SaleEndpoint : ISaleEndpoint
     {
         private IAPIHelper _apiHelper;
-        public SaleEndpoint(IAPIHelper aPIHelper)
+        public SaleEndpoint(IAPIHelper apiHelper)
         {
-            _apiHelper = aPIHelper;
+            _apiHelper = apiHelper;
         }
 
         public async Task PostSale(SaleModel sale)

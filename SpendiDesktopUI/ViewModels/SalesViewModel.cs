@@ -40,6 +40,17 @@ namespace SpendiDesktopUI.ViewModels
 			await LoadProducts();
 		}
 
+		private async Task ResetSalesViewModel()
+		{
+			Cart = new BindingList<CartItemUIModel>();
+			await LoadProducts();
+
+			NotifyOfPropertyChange(() => Subtotal);
+			NotifyOfPropertyChange(() => Tax);
+			NotifyOfPropertyChange(() => Total);
+			NotifyOfPropertyChange(() => CanCheckout);
+		}
+
 		private BindingList<ProductUIModel> _products;
 
 		public BindingList<ProductUIModel> Products
@@ -62,6 +73,7 @@ namespace SpendiDesktopUI.ViewModels
 				_selectedProduct = value;
 				NotifyOfPropertyChange(() => SelectedProduct);
 				NotifyOfPropertyChange(() => CanAddToCart);
+				NotifyOfPropertyChange(() => Description);
 			}
 		}
 
@@ -123,6 +135,18 @@ namespace SpendiDesktopUI.ViewModels
 			return subTotal;
 		}
 
+		public string Description
+		{
+			get
+			{
+				if (SelectedProduct == null)
+				{
+					return "";
+				}
+				return SelectedProduct.Description;
+			}
+		}
+
 		public string Tax
 		{
 			get
@@ -181,6 +205,7 @@ namespace SpendiDesktopUI.ViewModels
 			NotifyOfPropertyChange(() => Tax);
 			NotifyOfPropertyChange(() => Total);
 			NotifyOfPropertyChange(() => CanCheckout);
+			NotifyOfPropertyChange(() => CanAddToCart);
 		}
 
 		public bool CanAddToCart
@@ -252,6 +277,7 @@ namespace SpendiDesktopUI.ViewModels
 				});
 			}
 			await _saleEndpoint.PostSale(sale);
+			await ResetSalesViewModel();
 		}
 
 	}

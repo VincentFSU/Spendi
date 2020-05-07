@@ -12,8 +12,6 @@ namespace SpendiDataManager.Library.DataAccess
     {
         public void SaveSale(SaleModel saleInfo, string userId)
         {
-            //Make SOLID/DRY
-
             //Fill in available sale details to save to the database
             List<SaleDetailDBModel> saleDetails = new List<SaleDetailDBModel>();
             ProductData products = new ProductData();
